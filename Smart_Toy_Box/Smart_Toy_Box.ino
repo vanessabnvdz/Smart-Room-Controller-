@@ -15,17 +15,18 @@
 #include <mac.h>
 #include <SPI.h>
 #include <SPI.h>
-#define SCREEN_WIDTH 128 
-#define SCREEN_HEIGHT 64 
+#include <hue.h>
+#define SCREEN_WIDTH 128
+#define SCREEN_HEIGHT 64
 #define OLED_RESET     4
 #define SCREEN_ADDRESS 0x3C
 const int PIXELPIN = 17;
 const int PIXELCOUNT = 14;
-const int BUTTONPIN= 23;
+const int BUTTONPIN = 23;
 const int bri = 15;
 int pixelOn = true;
 int i;
-bool buttonState; 
+bool buttonState;
 bool stateChange;
 OneButton button1(BUTTONPIN, false);
 
@@ -39,44 +40,44 @@ bool status;
 void setup() {
   pixel.begin();
   pixel.show();
-  //button1.attachClick (click1);
-  //button1.attachDoubleClick (doubleclick1);
+  button1.attachClick (click1);
+  button1.attachDoubleClick (doubleclick1);
   Serial.begin(9600);
   buttonState = false;
-    
-  if(!display.begin(SSD1306_SWITCHCAPVCC, SCREEN_ADDRESS)) {
-    Serial.println(F("SSD1306 allocation failed"));
-    for(;;); // Don't proceed, loop forever
-  }
-   display.display();
-  delay(2000);
-  display.clearDisplay(); 
-  display.drawPixel(10, 10, SSD1306_WHITE);
-  pinMode (turnOn, INPUT)
-  Ethernet.begin(mac);
-  delay(200);          //ensure Serial Monitor is up and running           
-  //printIP();
-  Serial.printf("LinkStatus: %i  \n",Ethernet.linkStatus());
 
+  if (!display.begin(SSD1306_SWITCHCAPVCC, SCREEN_ADDRESS)) {
+    Serial.println(F("SSD1306 allocation failed"));
+    for (;;); // Don't proceed, loop forever
+  }
+  display.display();
+  delay(2000);
+  display.clearDisplay();
+  display.drawPixel(10, 10, SSD1306_WHITE);
+  pinMode (BUTTONPIN, INPUT);
+  Ethernet.begin(mac);
+  delay(200);          //ensure Serial Monitor is up and running
+  //printIP();
+  Serial.printf("LinkStatus: %i  \n", Ethernet.linkStatus());
+}
 
 void loop() {
-  if (buttonState == true) 
+  if (buttonState == true)
     for (i = 0; i < 14 ; i++) {
       pixel.fill(0xFF0000, i, 14);
       //delay(100);
       pixel.setBrightness(bri);
       pixel.show();
     }
-  display.setTextSize(3);             
-  display.setTextColor(SSD1306_WHITE);        
-  display.setCursor(0,0);            
+  display.setTextSize(3);
+  display.setTextColor(SSD1306_WHITE);
+  display.setCursor(0, 0);
   display.println(F("TIME TO CLEAN UP MAX "));
   display.clearDisplay();
 
-    turnOn = digitalWrite(hueHubPort);
-    setHue(2,true,HueBlue,255,255);
-    
-  
+
+  setHue(2, true, HueBlue, 255, 255);
+
+
 }
 
 void click1 () {
@@ -88,3 +89,4 @@ void click1 () {
 void doubleclick1 () {
   stateChange = !stateChange;
   Serial.println ("Hi, my name is Vanessa double click");
+}
